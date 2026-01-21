@@ -1,0 +1,35 @@
+name: Daily Order Topic
+
+on:
+  schedule:
+    # This is UTC time.
+    # If you want 12:00 AM (Midnight) in the Philippines (UTC+8),
+    # You must set this to 16:00 UTC (which is 4 PM the previous day UTC).
+    # 16:00 UTC + 8 hours = 00:00 Philippines Next Day.
+    - cron: '0 16 * * *'
+  
+  # Allows you to manually trigger it for testing
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python bot.py
